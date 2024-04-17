@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wordle</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .wordle-container {
+            max-width: 400px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .word-input {
+            width: 80%;
+            margin-bottom: 10px;
+            padding: 5px;
+            font-size: 1.2em;
+        }
+        .submit-btn {
+            padding: 5px 10px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+        .feedback {
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <div class="wordle-container">
+        <h1>Wordle</h1>
+        <input type="text" class="word-input" id="wordInput" maxlength="5" placeholder="Enter your guess">
+        <button class="submit-btn" onclick="checkGuess()">Submit</button>
+        <div class="feedback" id="feedback"></div>
+    </div>
+
+    <script>
+        const words = ["apple", "banana", "orange", "grape", "kiwi", "peach", "pear", "melon", "mango", "strawberry"];
+        let targetWord = "";
+        let guesses = 0;
+
+        function initializeGame() {
+            targetWord = words[Math.floor(Math.random() * words.length)];
+            guesses = 0;
+            document.getElementById('feedback').innerText = "";
+            console.log("Target word:", targetWord);
+        }
+
+        function checkGuess() {
+            const guess = document.getElementById('wordInput').value.toLowerCase().trim();
+            if (!validateGuess(guess)) {
+                alert("Please enter a valid 5-letter word with no repeated letters.");
+                return;
+            }
+            guesses++;
+            const feedback = getFeedback(guess);
+            document.getElementById('feedback').innerText = feedback;
+            if (feedback === "You win!") {
+                alert(`Congratulations! You guessed the word "${targetWord}" in ${guesses} guesses.`);
+                initializeGame();
+            }
+            document.getElementById('wordInput').value = "";
+        }
+
+        function validateGuess(guess) {
+            return /^[a-z]{5}$/i.test(guess) && new Set(guess).size === guess.length;
+        }
+
+        function getFeedback(guess) {
+            if (guess === targetWord) {
+                return "You win!";
+            }
+            let feedback = "";
+            for (let i = 0; i < guess.length; i++) {
+                if (guess[i] === targetWord[i]) {
+                    feedback += "●";
+                } else if (targetWord.includes(guess[i])) {
+                    feedback += "○";
+                } else {
+                    feedback += "◻";
+                }
+            }
+            return feedback;
+        }
+
+        initializeGame();
+    </script>
+</body>
+</html>
